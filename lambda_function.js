@@ -7,7 +7,7 @@ const docClient = DynamoDBDocumentClient.from(client);
 export const handler = async (event) => {
     try {
         // Parse the request body
-        const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+        const body = typeof event === 'string' ? JSON.parse(event) : event;
         
         // Extract parameters
         const num1 = parseFloat(body.num1);

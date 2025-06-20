@@ -336,12 +336,22 @@
                         })
                     });
 
-                    const data = await response.json();
+                    const responseData = await response.json();
 
                     if (response.ok) {
+                        // Handle API Gateway response format
+                        let data;
+                        if (responseData.body) {
+                            // If response has a body field, parse it as JSON
+                            data = JSON.parse(responseData.body);
+                        } else {
+                            // If response is already the data we need
+                            data = responseData;
+                        }
+                        
                         this.showResult(data.result);
                     } else {
-                        this.showError(data.error || 'Calculation failed');
+                        this.showError(responseData.error || 'Calculation failed');
                     }
                 } catch (error) {
                     console.error('Error calling Lambda:', error);
