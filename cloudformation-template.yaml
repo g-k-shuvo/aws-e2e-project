@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Calculator Lambda with DynamoDB Storage'
+
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    Default: calculator-lambda
+    Description: Name of the Lambda function
+  
+  DynamoDBTableName:
+    Type: String
+    Default: calculator-calculations
+    Description: Name of the DynamoDB table
+
+Resources:
+  # DynamoDB Table
+  CalculationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref DynamoDBTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Project
+          Value: Calculator
+        - Key: Environment
+          Value: Development
+
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${LambdaFunctionName}-execution-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                Resource: !GetAtt CalculationsTable.Arn
+
+  # Lambda Function
+  CalculatorLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          export const handler = async (event) => {
+            return {
+              statusCode: 200,
+              body: JSON.stringify('Hello from Lambda!')
+            };
+          };
+      Environment:
+        Variables:
+          CALCULATIONS_TABLE_NAME: !Ref CalculationsTable
+      Timeout: 30
+      MemorySize: 128
+
+  # Lambda Function URL
+  LambdaFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      FunctionName: !Ref CalculatorLambda
+      AuthType: NONE
+      Cors:
+        AllowCredentials: false
+        AllowHeaders:
+          - Content-Type
+        AllowMethods:
+          - POST
+          - OPTIONS
+        AllowOrigins:
+          - '*'
+        ExposeHeaders:
+          - Content-Type
+        MaxAge: 86400
+
+Outputs:
+  DynamoDBTableName:
+    Description: Name of the DynamoDB table
+    Value: !Ref CalculationsTable
+    Export:
+      Name: !Sub '${AWS::StackName}-TableName'
+
+  DynamoDBTableArn:
+    Description: ARN of the DynamoDB table
+    Value: !GetAtt CalculationsTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-TableArn'
+
+  LambdaFunctionName:
+    Description: Name of the Lambda function
+    Value: !Ref CalculatorLambda
+    Export:
+      Name: !Sub '${AWS::StackName}-FunctionName'
+
+  LambdaFunctionUrl:
+    Description: URL of the Lambda function
+    Value: !Ref LambdaFunctionUrl
+    Export:
+      Name: !Sub '${AWS::StackName}-FunctionUrl' 

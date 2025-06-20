@@ -231,7 +231,7 @@
                 this.num2 = null;
                 this.operation = null;
                 // Replace this with your actual Lambda function URL after deployment
-                this.lambdaUrl = 'YOUR_LAMBDA_FUNCTION_URL_HERE';
+                this.lambdaUrl = 'https://1iqive8oef.execute-api.ap-south-1.amazonaws.com/prod';
                 this.initializeElements();
                 this.bindEvents();
             }
@@ -311,7 +311,7 @@
                 }
 
                 // Check if Lambda URL is configured
-                if (this.lambdaUrl === 'YOUR_LAMBDA_FUNCTION_URL_HERE') {
+                if (this.lambdaUrl === '') {
                     this.showError('Please configure your Lambda function URL in the code');
                     return;
                 }

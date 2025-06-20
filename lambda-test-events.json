@@ -1,0 +1,86 @@
+{
+  "test-addition": {
+    "body": "{\"num1\": 10, \"num2\": 5, \"operation\": \"+\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-subtraction": {
+    "body": "{\"num1\": 15, \"num2\": 7, \"operation\": \"-\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-multiplication": {
+    "body": "{\"num1\": 6, \"num2\": 8, \"operation\": \"*\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-division": {
+    "body": "{\"num1\": 20, \"num2\": 4, \"operation\": \"/\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-modulo": {
+    "body": "{\"num1\": 17, \"num2\": 5, \"operation\": \"%\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-exponentiation": {
+    "body": "{\"num1\": 2, \"num2\": 8, \"operation\": \"**\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-square-root": {
+    "body": "{\"num1\": 16, \"num2\": 0, \"operation\": \"sqrt\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-division-by-zero": {
+    "body": "{\"num1\": 10, \"num2\": 0, \"operation\": \"/\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-negative-square-root": {
+    "body": "{\"num1\": -4, \"num2\": 0, \"operation\": \"sqrt\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-invalid-operation": {
+    "body": "{\"num1\": 10, \"num2\": 5, \"operation\": \"invalid\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-missing-parameters": {
+    "body": "{\"num1\": 10}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-invalid-numbers": {
+    "body": "{\"num1\": \"abc\", \"num2\": \"def\", \"operation\": \"+\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-decimal-numbers": {
+    "body": "{\"num1\": 3.14, \"num2\": 2.86, \"operation\": \"+\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "test-large-numbers": {
+    "body": "{\"num1\": 999999999, \"num2\": 111111111, \"operation\": \"*\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+} 

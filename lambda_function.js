@@ -1,3 +1,9 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+
+const client = new DynamoDBClient({});
+const docClient = DynamoDBDocumentClient.from(client);
+
 export const handler = async (event) => {
     try {
         // Parse the request body
@@ -92,6 +98,30 @@ export const handler = async (event) => {
                 };
         }
         
+        // Store calculation in DynamoDB
+        const timestamp = new Date().toISOString();
+        const calculationId = `${timestamp}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        const calculationRecord = {
+            ID: calculationId,
+            timestamp: timestamp,
+            num1: num1,
+            num2: num2,
+            operation: operation,
+            result: result,
+            createdAt: timestamp
+        };
+        
+        try {
+            await docClient.send(new PutCommand({
+                TableName: process.env.CALCULATIONS_TABLE_NAME || '',
+                Item: calculationRecord
+            }));
+        } catch (dbError) {
+            console.error('Error storing calculation in DynamoDB:', dbError);
+            // Continue with the response even if DB storage fails
+        }
+        
         // Return successful response
         return {
             statusCode: 200,
@@ -105,11 +135,14 @@ export const handler = async (event) => {
                 result: result,
                 operation: operation,
                 num1: num1,
-                num2: num2
+                num2: num2,
+                calculationId: calculationId,
+                timestamp: timestamp
             })
         };
         
     } catch (error) {
+        console.error('Lambda function error:', error);
         return {
             statusCode: 500,
             headers: {
